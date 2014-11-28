@@ -1,10 +1,10 @@
 # Site settings
 title: Turing Complete 
-email: your-email@domain.com
+email:  
 description: > # this means to ignore newlines until "baseurl:"
         "The only way of discovering the limits of the possible is to venture a little way past them into the impossible." - Arthur C. Clarke
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: "" # the base hostname & protocol for your site
 twitter_username: fvbever
 github_username: frankvanbever 
 
