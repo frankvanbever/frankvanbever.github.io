@@ -1,25 +1,21 @@
 ---
 layout: post
-title:  "Welcome to Jekyll!"
-date:   2014-11-27 12:35:25
-categories: jekyll update
+title:  "Hello World!"
+date:   2015-01-07 10:38:25
+categories: hello 
 ---
-You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run `jekyll serve`, which launches a web server and auto-regenerates your site when a file is updated.
+I'm Frank. I like computers. Especially the kind of computers you can't see. 
 
-To add new posts, simply add a file in the `_posts` directory that follows the convention `YYYY-MM-DD-name-of-post.ext` and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.
+Don't worry, this isn't paranoia manifesting itself, it's just that I work with these computers called embedded systems. 
+I could try to explain what an embedded system is but Elecia White's definition in her book *Making Embedded Systems* is better than anything I could come up with:
 
-Jekyll also offers powerful support for code snippets:
+> An embedded system is a computerized system that is purpose built for it's application
 
-{% highlight ruby %}
-def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=> prints 'Hi, Tom' to STDOUT.
-{% endhighlight %}
+Embedded systems range from the tiny computers inside your car which make your life a bit safer to the operating system of the smartphone in your pocket.  
+I like the idea of open source software so that's what I try to use as much as possible, both in my work and my personal life.
 
-Check out the [Jekyll docs][jekyll] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll’s dedicated Help repository][jekyll-help].
+When I'm not working I like to play bass guitar. I like to combine my love for computers/FOSS and my love for music.
 
-[jekyll]:      http://jekyllrb.com
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-help]: https://github.com/jekyll/jekyll-help
+According to my girlfriend I am a gifted silly dancer. 
+
+Basically if I have something I think is interesting enough to share I'll post it here.
