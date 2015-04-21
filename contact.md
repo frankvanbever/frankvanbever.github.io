@@ -9,7 +9,7 @@ title: Contact Long Haul
   You can contact me through the form here.
   Note that it passes through a third party server so it's not private.
   </div>
-  <form action="http://formspree.io/frank.vanever@gmail.com" method="post">
+  <form action="http://formspree.io/frank.vanbever@gmail.com" method="post">
     <label for="name">Name</label>    
     <input type="text" id="name" name="name" class="full-width"><br>
     <label for="email">Email Address</label>
