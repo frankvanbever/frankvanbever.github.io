@@ -1,12 +1,25 @@
-# Site settings
-title: Turing Complete 
-email:  
-description: > # this means to ignore newlines until "baseurl:"
-        "The only way of discovering the limits of the possible is to venture a little way past them into the impossible." - Arthur C. Clarke
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "" # the base hostname & protocol for your site
-twitter_username: fvbever
-github_username: frankvanbever 
+title: Turtles All The Way Down 
+description: Words arranged in patterns 
 
-# Build settings
-markdown: kramdown
+url: "http://127.0.0.1:4000/"
+baseurl: ""
+paginate_path: "blog/page:num/"
+permalink: blog/:title/
+
+markdown: redcarpet
+highlighter: pygments
+paginate: 5
+
+navigation:
+ - title: Home
+   url: /index.html
+ - title: About
+   url: /about.html
+ - title: Contact
+   url: /contact.html
+
+social:
+   github: frankvanbever 
+   twitter: fvbever 
+   email: frank.vanbever@gmail.com
+
