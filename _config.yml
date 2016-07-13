@@ -1,22 +1,23 @@
-title: Turtles All The Way Down 
-description: Words arranged in patterns 
+title: Turtles All The Way Down
+description: Words arranged in patterns
 
-url: "http://127.0.0.1:4000/"
+url: "http://www.vanbever.me/"
 baseurl: ""
 paginate_path: "blog/page:num/"
 permalink: blog/:title/
 
-markdown: redcarpet
-highlighter: pygments
+markdown: kramdown
+highlighter: rouge
+gems: [jekyll-paginate]
 paginate: 5
 
 navigation:
  - title: Home
    url: /index.html
  - title: About
-   url: /about.html
+   url: /about
  - title: Contact
-   url: /contact.html
+   url: /contact
 
 social:
    github: frankvanbever 
