@@ -3,19 +3,13 @@ layout: default
 title: About 
 ---
 
-<div class="post">
-	<h1 class="pageTitle">About me</h1>
-	<div align="center">
-		<img src="{{ '/assets/img/header3.png' | prepend: site.baseurl }}" alt=""> 
-	</div>
+#About me
+	
+![write c, play bass, drink coffee]({{ '/assets/img/header3.png' | prepend: site.baseurl }}")
 
-	<p class="intro">
-	<ul>
-	<li> I am Frank.
-	<li> I develop software for tiny computers.
-	<li> I play bass guitar.</br>
-	<li> I sometimes wear a hat. (outdoors, when it's cold, it's sensible)
-	<li> I like hamburgers. (who doesn't?)
-	<li> I am a gifted silly dancer (if you believe my girlfriend).
-	</ul>
-</div>
+* I am Frank.
+* I develop software for tiny computers.
+* I play bass guitar.
+* I sometimes wear a hat. (outdoors, when it's cold, it's sensible)
+* I like hamburgers. (who doesn't?)
+* I am a gifted silly dancer (if you believe my girlfriend).
