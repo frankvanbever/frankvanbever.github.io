@@ -11,11 +11,11 @@ title: About
 
 	<p class="intro">
 	<ul>
-	<li> I am Frank.</br>
-	<li> I develop software for tiny computers.</br>
+	<li> I am Frank.
+	<li> I develop software for tiny computers.
 	<li> I play bass guitar.</br>
-	<li> I sometimes wear a hat. (outdoors, when it's cold, it's sensible) </br>
-	<li> I like hamburgers. (who doesn't?)</br>
-	<li> I am a gifted silly dancer (if you believe my girlfriend).</br>
+	<li> I sometimes wear a hat. (outdoors, when it's cold, it's sensible)
+	<li> I like hamburgers. (who doesn't?)
+	<li> I am a gifted silly dancer (if you believe my girlfriend).
 	</ul>
 </div>
