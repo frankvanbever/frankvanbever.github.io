@@ -3,9 +3,9 @@ layout: default
 title: About 
 ---
 
-#About me
+# About me
 	
-![write c, play bass, drink coffee]({{ '/assets/img/header3.png' | prepend: site.baseurl }}")
+![write c, play bass, drink coffee]({{ site.url }}/assets/img/header3.png)
 
 * I am Frank.
 * I develop software for tiny computers.
