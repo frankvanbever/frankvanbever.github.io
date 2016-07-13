@@ -6,10 +6,7 @@ categories: FOSS, Bass, Musescore, Ardour
 ---
 
 
-About a year ago I decided that I was going to pick up my bass guitar
-again after being on a hiatus for a couple of years.  This was mainly
-motivated by the feeling that I was spending too much time in front of
-a monitor (and seeing Bootsy play at Couleur Cafe Festival).  However, being
+About a year ago I decided that I was going to pick up my bass guitar again after being on a hiatus for a couple of years.  This was mainly motivated by the feeling that I was spending too much time in front of a monitor (and seeing Bootsy play at Couleur Cafe Festival).  However, being
 the computer geek that I am I can't help but throw some (open
 source!) technology into the mix. This post details the workflow I follow to
 learn a song.
