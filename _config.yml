@@ -11,8 +11,6 @@ highlighter: rouge
 gems: [jekyll-paginate]
 paginate: 5
 
-google_analytics: UA-110348909-1
-
 navigation:
  - title: Home
    url: /index.html
