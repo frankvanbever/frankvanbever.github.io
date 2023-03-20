@@ -1,0 +1,3 @@
+[submodule "themes/fvb-theme"]
+	path = themes/fvb-theme
+	url = git@github.com:frankvanbever/fvb-theme.git
