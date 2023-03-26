@@ -19,3 +19,18 @@ theme = "fvb-theme"
     url = "/about/"
     weight = 2
 
+[markup]
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ''
+    hl_inline = false
+    lineAnchors = ''
+    lineNoStart = 1
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = true
+    noHl = false
+    style = 'solarized-dark'
+    tabWidth = 4
