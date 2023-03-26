@@ -7,3 +7,15 @@ theme = "fvb-theme"
 [params]
     mainSections = ['posts']
 
+[menu]
+  [[menu.main]]
+    name = "Posts"
+    pre = "posts"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "About"
+    pre = "about"
+    url = "/about/"
+    weight = 2
+
