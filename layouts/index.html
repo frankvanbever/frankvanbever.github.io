@@ -4,9 +4,7 @@
 {{ range $pages }}
 <p>
     <h3><a class="title" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-    <a class="summary" href="{{ .RelPermalink }}">
         <p>{{ .Summary }}</p>
-    </a>
 </p>
 {{ end }}
 {{ end }}
