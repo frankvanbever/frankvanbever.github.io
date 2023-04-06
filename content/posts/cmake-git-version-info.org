@@ -1,0 +1,104 @@
+#+TITLE: Getting git information into your C application using Cmake
+#+DATE: 2023-04-06T17:04:12+02:00
+#+DRAFT: true
+
+I recently found myself wanting to get some insight into what exactly went into
+a given binary that we deployed on an embedded system. As a first step I wanted
+to get the commit hash for the ~HEAD~ of the branch from which was built.
+
+# more
+
+After a bit of searching around I stumbled upon [[https://www.mattkeeter.com/blog/2018-01-06-versioning/][this blog post by Matthew Keeter]]
+which I took as a starting point. Instead of creating the file from the cmake
+script directly I instead opted to have a template file that would be filled in
+at configure time.
+
+
+This is the modified cmake script:
+
+#+begin_src cmake
+  execute_process(COMMAND git log --pretty=format:'%h' -n 1
+    OUTPUT_VARIABLE GIT_REV
+    ERROR_QUIET
+  )
+
+  if("${GIT_REV}" STREQUAL "")
+    set(GIT_REV "N/A")
+    set(GIT_DIFF "")
+    set(GIT_TAG "N/A")
+    set(GIT_BRANCH "N/A")
+  else()
+    execute_process(
+      COMMAND bash -c "git diff --quiet --exit-code || echo -dirty"
+      OUTPUT_VARIABLE GIT_DIFF)
+    execute_process(
+      COMMAND git describe --exact-match --tags OUTPUT_VARIABLE GIT_TAG ERROR_QUIET)
+    execute_process(
+      COMMAND git rev-parse --abbrev-ref HEAD OUTPUT_VARIABLE GIT_BRANCH)
+
+    string(STRIP "${GIT_REV}" GIT_REV)
+    string(SUBSTRING "${GIT_REV}" 1 7 GIT_REV)
+    string(STRIP "${GIT_DIFF}" GIT_DIFF)
+    string(STRIP "${GIT_TAG}" GIT_TAG)
+    string(STRIP "${GIT_BRANCH}" GIT_BRANCH)
+  endif()
+
+  configure_file(
+    "${SRC_DIR}/version.h.in"
+    "${BIN_DIR}/version.h"
+  )
+#+end_src
+
+We collect the following information:
+
+- ~GIT_REV~ is the current abbreviated commit hash
+- ~GIT_DIFF~ will contain the string ~-dirty~ if the tree from which it was
+  built is dirty
+- ~GIT_TAG~ will contain the tag only if the current commit has a tag associated
+  with it.
+- ~GIT_BRANCH~ will contain the name of the current branch
+
+The template for the version header file is fairly straightforward. It'll
+
+#+begin_src c
+#ifndef VERSION_H
+#define VERSION_H
+
+#define GIT_REV "@GIT_REV@@GIT_DIFF@"
+#define GIT_TAG "@GIT_TAG@"
+#define GIT_BRANCH "@GIT_BRANCH@"
+
+#endif /* VERSION_H */
+#+end_src
+
+Triggering the generation of this file is, in my opinion, most easily
+accomplished by adding a target for it:
+
+#+begin_src cmake
+  add_custom_target(gen-version-h
+    COMMAND "${CMAKE_COMMAND}"
+    "-D" "SRC_DIR=${PROJECT_SOURCE_DIR}/src"
+    "-D" "BIN_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+    "-P" "${PROJECT_SOURCE_DIR}/support/version.cmake"
+    COMMENT "Generating git version file"
+  )
+
+  add_dependencies(my-application gen-version-h)
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+#+end_src
+
+Because the new ~cmake~ process runs in a different context it does not have all
+the same variables defined that we have available while building the source
+code. To know where the source resides and where the configured file should be
+installed we need to pass in respective paths. This is what ~SRC_DIR~ and
+~BIN_DIR~ accomplish.
+
+Finally we need to make sure that the compiler will be able to find the file
+which we do by including the current binary directory in the search path.
+
+The default behavior of this form of ~add_custom_target~ without an output file
+is that it will always be considered out of date, hence it'll be invoked every
+time we compile.
+
+This way we get up-to-date information about the provenance of every build we
+make of the software.
