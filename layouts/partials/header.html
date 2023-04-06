@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        {{ $foo := "" }}
+        {{ if not (eq .Site.Title .Title) }}
+        {{ $foo = .Section }}
+        {{ else }}
+        {{ $foo = " " }}
+        {{ end }}
+        {{ if (and (eq $foo "") (not (eq .Title ""))) }}
+        {{ $foo = .Title }}
+        {{ end }}
+        <a class="navbar-brand" href="#"><h1>{{ .Site.Title }}/{{ lower $foo }}</h1></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {{ range .Site.Menus.main }}
+                <h2>
+                <li class="nav-item" >
+                    <a class="nav-link" href="{{ .URL }}">
+                        {{ $text := print .Name  | safeHTML }}
+                        {{ $text }}
+                    </a>
+                </li>
+                </h2>
+                {{ end }}
+            </ul>
+        </div>
+    </div>
+</nav>

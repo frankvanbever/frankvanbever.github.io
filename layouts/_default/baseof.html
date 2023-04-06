@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{- partial "head.html" . -}}
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                     {{- partial "header.html" . -}}
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                    <div id="content">
+                        {{- block "main" . }}{{- end }}
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-8">
+                    {{- partial "footer.html" . -}}
+                </div>
+                <div class="col"></div>
+            </div>
+    </body>
+</html>

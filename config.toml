@@ -2,8 +2,6 @@ baseURL = 'http://example.org/'
 languageCode = 'en-us'
 title = '/home/fvb'
 
-theme = "fvb-theme"
-
 [params]
     mainSections = ['posts']
 
