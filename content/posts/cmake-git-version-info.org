@@ -1,4 +1,4 @@
-#+TITLE: Getting git information into your C application using Cmake
+#+TITLE: Compile-time git version info using CMake
 #+DATE: 2023-04-06T17:04:12+02:00
 #+DRAFT: true
 
@@ -9,7 +9,7 @@ to get the commit hash for the ~HEAD~ of the branch from which was built.
 # more
 
 After a bit of searching around I stumbled upon [[https://www.mattkeeter.com/blog/2018-01-06-versioning/][this blog post by Matthew Keeter]]
-which I took as a starting point. Instead of creating the file from the cmake
+which I took as a starting point. Instead of creating the file from the ~cmake~
 script directly I instead opted to have a template file that would be filled in
 at configure time.
 
@@ -102,3 +102,12 @@ time we compile.
 
 This way we get up-to-date information about the provenance of every build we
 make of the software.
+
+I've created a simple demo application and put it on [[https://github.com/frankvanbever/cmake-git-info][Github]]. It outputs the
+following when you compile it:
+
+#+begin_src
+GIT_REV is 62b4399
+GIT_TAG is foo
+GIT_BRANCH is main
+#+end_src
