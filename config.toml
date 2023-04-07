@@ -4,6 +4,7 @@ title = '/home/fvb'
 
 [params]
     mainSections = ['posts']
+    author = "Frank Vanbever"
 
 [menu]
   [[menu.main]]
