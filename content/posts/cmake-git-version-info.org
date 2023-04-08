@@ -1,6 +1,6 @@
 #+TITLE: Compile-time git version info using CMake
 #+DATE: 2023-04-06T17:04:12+02:00
-#+DRAFT: true
+#+DRAFT: false
 
 I recently found myself wanting to get some insight into what exactly went into
 a given binary that we deployed on an embedded system. As a first step I wanted
