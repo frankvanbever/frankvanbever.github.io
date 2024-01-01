@@ -4,7 +4,7 @@
 
 I recently found myself wanting to get some insight into what exactly went into
 a given binary that we deployed on an embedded system. As a first step I wanted
-to get the commit hash for the ~HEAD~ of the branch from which was built.
+to get the commit hash for the ~HEAD~ of the branch from which it was built.
 
 # more
 
@@ -58,7 +58,7 @@ We collect the following information:
   with it.
 - ~GIT_BRANCH~ will contain the name of the current branch
 
-The template for the version header file is fairly straightforward. It'll
+The template for the version header file is fairly straightforward.
 
 #+begin_src c
 #ifndef VERSION_H
@@ -71,7 +71,7 @@ The template for the version header file is fairly straightforward. It'll
 #endif /* VERSION_H */
 #+end_src
 
-Triggering the generation of this file is, in my opinion, most easily
+Triggering the generation of this file is in my opinion most easily
 accomplished by adding a target for it:
 
 #+begin_src cmake
@@ -96,7 +96,7 @@ installed we need to pass in respective paths. This is what ~SRC_DIR~ and
 Finally we need to make sure that the compiler will be able to find the file
 which we do by including the current binary directory in the search path.
 
-The default behavior of this form of ~add_custom_target~ without an output file
+The default behavior of this form of ~add_custom_target~, without an output file,
 is that it will always be considered out of date, hence it'll be invoked every
 time we compile.
 
