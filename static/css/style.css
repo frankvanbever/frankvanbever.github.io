@@ -1,5 +1,7 @@
 h1,h2,h3 {
     font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-style: italic;
 }
 
 body {
@@ -10,4 +12,19 @@ body {
 
 code {
     font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-style: italic;
 }
+
+td {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-style: normal;
+}
+
+th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-style: italic;
+}
+

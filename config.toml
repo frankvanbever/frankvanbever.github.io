@@ -31,5 +31,5 @@ title = '/home/fvb'
     lineNumbersInTable = false
     noClasses = true
     noHl = false
-    style = 'solarized-dark'
+    style = 'solarized-light'
     tabWidth = 4
