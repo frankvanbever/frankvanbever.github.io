@@ -1,0 +1,429 @@
+#+TITLE: FFT in C
+#+DATE: 2024-03-31
+
+I've been on a deep dive into DSP (Digital Signal Processing).
+Mainly because I want to know how audio effects work. I started with
+a book about programming VST (Virtual Studio Technology) plugins.
+Though I quickly found out that the DSP course I took at university was a bit
+too long ago, so I had to go back to basics.
+
+# more
+
+I worked through  "/Mathematics of the Discrete Fourier Transform (DFT)
+With Audio Applications/" by Julius O. Smith III. It was a super interesting
+experience, though also a lot of work. In the end, I feel that I have a good
+grasp of the Fourier transform and a lot of the mathematics underpinning it.
+
+After having finished I figured that I should probably try to translate this
+knowledge into something practical, so I decided that I wanted to implement the
+DFT and Cooley-Tukey FFT in C.
+
+Up until this point, I've been exclusively working in Python, using Numpy, Scipy,
+and Matplotlib in a Jupyter Lab. The combination of these projects makes
+scientific computing a breeze.
+
+Moving to C made me realize I never really have done something like this in my
+15 years of experience. I have no clue how ~complex numbers~ work in C for
+example. So these are my somewhat cleaned-up notes of my process of figuring out
+how to implement the DFT/FFT in C.
+
+** Complex numbers
+
+Complex numbers in C were introduced in the C99 standard. Everything you need is
+available in ~complex.h~. In theory, it's possible with some compiler magic to
+get these things without the header (e.g. ~_Complex~ is seemingly available
+without including the header) but it doesn't make a lot of sense to do that.
+
+#+begin_src c
+#include <complex.h>
+#+end_src
+
+
+A complex number is made up of a real and imaginary part. A declaration of a
+complex number looks like this:
+
+#+begin_src c
+  double complex foo = 1.0 + 2.0*I;
+#+end_src
+
+This is a double-precision floating point type. I is the imaginary constant. If
+you want to get the separate real and imaginary parts the functions ~creal~ and
+~cimag~ provide these.
+
+The following function does a pretty print of a complex number:
+
+#+begin_src c
+  #include <stdio.h>
+  void print_complex(complex z)
+  {
+      printf("%f+%f*i\n", creal(z), cimag(z));
+  }
+#+end_src
+
+Arithmetic works just like it would with regular types:
+
+#+begin_src c
+  void complex_arithmetic(void)
+  {
+      double complex a = 1.0 + 2.0*I;
+      double complex b = 2.0 + 3.0*I;
+
+      print_complex(a+b);
+      print_complex(a-b);
+      print_complex(a*b);
+      print_complex(a/b);
+  }
+#+end_src
+
+Gives the following output:
+
+#+begin_src
+3.000000+5.000000*i
+-1.000000+-1.000000*i
+-4.000000+7.000000*i
+0.615385+0.076923*i
+#+end_src
+
+Which looks OK. This is really all we need to implement a DFT.
+
+** Discrete Fourier Transform
+
+The discrete Fourier transform is defined by the following formula
+
+$$
+X_{k} = \sum_{n = 0}^{N - 1} x_{n} \cdot e^{-\frac{i2\pi}{N}kn}
+$$
+
+We've got arithmetic down, but there's a couple more things that we need. First
+of all, there's the exponential function. Regularly you'd use ~exp( double arg)~
+as defined in ~math.h~. However, given that we're dealing with complex numbers
+here we need the complex variant ~cexp(double complex z)~ instead. The other
+thing is \(\pi\), which is defined as ~M_PI~ as part of the mathematical
+constants that GCC adds to ~math.h~.
+
+This gives us the following C implementation:
+
+#+begin_src c
+void dft(complex double *x, complex double *X, size_t len)
+{
+	int N = len;
+	if (N == 0)
+		return;
+	for (int k = 0; k < len; k++) {
+		X[k] = 0.0f;
+		for (int n = 0; n < len; n++) {
+			long double exponent = (-2.0L * M_PI * k * n) / N;
+			X[k] += x[n] * cexp(I * exponent);
+		}
+	}
+}
+#+end_src
+
+When we use the following loop to fill in some dummy sample data
+
+#+begin_src c
+static void fill_complex_testdata(double complex *x, size_t num_samples)
+{
+	for (int i = 0; i < num_samples; i++) {
+		x[i] = 1.0 * i + 1.0 * i * I;
+	}
+}
+#+end_src
+
+We get the following output:
+
+#+ATTR_HTML: :class table table-striped
+| Frequency samples     |
+|-----------------------|
+| 28.000000+28.000000*i |
+| -13.656854+5.656854*i |
+| -8.000000+-0.000000*i |
+| -5.656854+-2.343146*i |
+| -4.000000+-4.000000*i |
+| -2.343146+-5.656854*i |
+| -0.000000+-8.000000*i |
+| 5.656854+-13.656854*i |
+
+
+Let's compare if this output is correct by checking it against the ~numpy~ FFT
+implementation.
+
+#+begin_src python
+from numpy.fft import fft
+
+def complex_testdata(num_samples):
+    testdata = []
+    for i in range(num_samples):
+        testdata.append(i * 1.0+ i * 1.0j)
+
+    return testdata
+
+
+
+def complex_fft_results(num_samples):
+    x = complex_testdata(num_samples)
+    X = fft(x)
+
+    for i in X:
+        print(i)
+
+
+
+if __name__ == '__main__':
+    complex_fft_results(8)
+#+end_src
+
+Let's compare the output of this with the output of our C function:
+
+#+ATTR_HTML: :class table table-striped
+| C                     | Python                                   |
+|-----------------------+------------------------------------------|
+| 28.000000+28.000000*i | (28+28j)                                 |
+| -13.656854+5.656854*i | (-13.65685424949238+5.656854249492381j)  |
+| -8.000000+-0.000000*i | (-8+0j)                                  |
+| -5.656854+-2.343146*i | (-5.656854249492381-2.3431457505076194j) |
+| -4.000000+-4.000000*i | (-4-4j)                                  |
+| -2.343146+-5.656854*i | (-2.3431457505076194-5.656854249492381j) |
+| -0.000000+-8.000000*i | (0-8j)                                   |
+| 5.656854+-13.656854*i | (5.656854249492381-13.65685424949238j)   |
+
+Those numbers look almost the same, the small differences can be attributed to
+floating point rounding errors.
+
+** Cooley-Tukey FFT
+
+The Cooley-Tukey FFT is an algorithm to compute the Fourier Transform faster
+than the regular DFT. It's recursive in nature. The [[https://en.wikipedia.org/wiki/Cooley–Tukey_FFT_algorithm][Wikipedia article]] about it
+is pretty good so I'd direct you over there for the explanation.
+
+#+begin_src c
+int fft(complex double *x, complex double **X, size_t len)
+{
+	int ret = -1;
+	complex double *x_even = NULL;
+	complex double *x_odd = NULL;
+
+	complex double *X_even = NULL;
+	complex double *X_odd = NULL;
+
+	complex double *factor = NULL;
+
+	*X = malloc(len * sizeof(complex double));
+	if (*X == NULL) {
+		goto cleanup;
+	}
+
+	if (len == 1) {
+		(*X)[0] = x[0];
+		return 0;
+	} else {
+		if (get_even(x, len, &x_even)) {
+			goto cleanup;
+		}
+		if (get_odd(x, len, &x_odd)) {
+			goto cleanup;
+		}
+
+		if (fft(x_even, &X_even, len / 2)) {
+			goto cleanup;
+		}
+
+		if (fft(x_odd, &X_odd, len / 2)) {
+			goto cleanup;
+		}
+
+		if (get_factor(len, &factor)) {
+			goto cleanup;
+		}
+
+		for (int i = 0; i < len; i++) {
+			int index = i % (len / 2);
+			(*X)[i] = X_even[index] + X_odd[index] * factor[i];
+		}
+	}
+
+	ret = 0;
+
+cleanup:
+	if (x_even)
+		free(x_even);
+	if (x_odd)
+		free(x_odd);
+	if (X_even)
+		free(X_even);
+	if (X_odd)
+		free(X_odd);
+	if (factor)
+		free(factor);
+
+	return ret;
+}
+#+end_src
+
+The algorithm works recursively on the even and odd samples. To respectively get
+the even and odd samples I use the following:
+
+#+begin_src c
+static int get_even(complex double *x, size_t len, complex double **even)
+{
+	size_t N = (len / 2) + (len % 2);
+
+	*even = malloc(N * sizeof(complex double));
+	if (*even == NULL) {
+		return -1;
+	}
+
+	for (int i = 0; i < N; i++) {
+		(*even)[i] = x[i * 2];
+	}
+
+	return 0;
+}
+
+static int get_odd(complex double *x, size_t len, complex double **odd)
+{
+	size_t N = len / 2;
+
+	*odd = malloc(N * sizeof(complex double));
+	if (*odd == NULL) {
+		return -1;
+	}
+
+	for (int i = 0; i < N; i++) {
+		(*odd)[i] = x[(i * 2) + 1];
+	}
+
+	return 0;
+}
+
+static int get_factor(int N, complex double **factor)
+{
+	*factor = malloc(N * sizeof(complex double));
+	if (*factor == 0) {
+		return -1;
+	}
+
+	for (int i = 0; i < N; i++) {
+		(*factor)[i] = cexp(-2 * I * i * M_PI / N);
+	}
+
+	return 0;
+}
+#+end_src
+
+Using it on the same data that We've been using before gives the following results:
+
+#+ATTR_HTML: :class table table-striped
+| C (dft)               | C (fft)               | Python                                   |
+|-----------------------+-----------------------+------------------------------------------|
+| 28.000000+28.000000*i | 28.000000+28.000000*i | (28+28j)                                 |
+| -13.656854+5.656854*i | -13.656854+5.656854*i | (-13.65685424949238+5.656854249492381j)  |
+| -8.000000+-0.000000*i | -8.000000+-0.000000*i | (-8+0j)                                  |
+| -5.656854+-2.343146*i | -5.656854+-2.343146*i | (-5.656854249492381-2.3431457505076194j) |
+| -4.000000+-4.000000*i | -4.000000+-4.000000*i | (-4-4j)                                  |
+| -2.343146+-5.656854*i | -2.343146+-5.656854*i | (-2.3431457505076194-5.656854249492381j) |
+| -0.000000+-8.000000*i | 0.000000+-8.000000*i  | (0-8j)                                   |
+| 5.656854+-13.656854*i | 5.656854+-13.656854*i | (5.656854249492381-13.65685424949238j)   |
+
+which as you can see corresponds pretty well with what we got from both Python
+and the DFT. There's something weird happening with positive and negative zero
+but I'm chalking that up to ~IEEE 754~ being weird.
+
+** Iterative FFT
+
+Coming from an embedded software background that recursive FFT implementation
+doesn't sit exactly right with me. First of all, there's the issue of the
+function being recursive, which means that all of the state is being kept on the stack,
+which consumes memory that we might not have available leading to a possible
+stack overflow. Additionally, we're allocating and deallocating memory all over
+the place. Fortunately, there's a solution for this in the iterative FFT, which
+uses bit-reversal to basically do an in-place iterative radix-2 FFT. Once again
+[[https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm#Data_reordering,_bit_reversal,_and_in-place_algorithms][Wikipedia]] has a very good explanation.
+
+#+begin_src c
+int iterative_fft(const complex double *const x, complex double *X, size_t len)
+{
+	complex double w_m = 0.0;
+	complex double w = 0.0;
+	complex double t = 0.0;
+	complex double u = 0.0;
+	int m = 0;
+
+	bit_reverse_copy(x, X, len);
+	for (int s = 1; s <= log2(len); s++) {
+		m = pow(2, s);
+		w_m = cexp(-2 * M_PI * I / m);
+		for (int k = 0; k < len; k += m) {
+			w = 1.0;
+			for (int j = 0; j < m / 2; j++) {
+				t = w * X[k + j + m / 2];
+				u = X[k + j];
+				X[k + j] = u + t;
+				X[k + j + m / 2] = u - t;
+				w = w * w_m;
+			}
+		}
+	}
+
+	return 0;
+}
+#+end_src
+
+With the bit reverse copy:
+
+#+begin_src c
+static uint32_t rev(const uint32_t a, size_t len)
+{
+	uint32_t num_of_bits = log2(len);
+	uint32_t mask = 1 << (num_of_bits - 1);
+	uint32_t reversed = 0;
+	for (int i = 0; i < num_of_bits; i++) {
+		if ((a & mask) != 0) {
+			reversed = reversed | (1 << i);
+		}
+		mask = mask >> 1;
+	}
+
+	return reversed;
+}
+
+static int bit_reverse_copy(const complex double *const x, complex double *X,
+			    size_t len)
+{
+	for (int i = 0; i < len; i++) {
+		X[rev(i, len)] = x[i];
+	}
+
+	return 0;
+}
+#+end_src
+
+Running this with the test data used for the previous 2 implementations gives
+the following results:
+
+#+ATTR_HTML: :class table table-striped
+| C (fft)               | C (iterative FFT)     | Python                                   |
+|-----------------------+-----------------------+------------------------------------------|
+| 28.000000+28.000000*i | 28.000000+28.000000*i | (28+28j)                                 |
+| -13.656854+5.656854*i | -13.656854+5.656854*i | (-13.65685424949238+5.656854249492381j)  |
+| -8.000000+-0.000000*i | -8.000000+-0.000000*i | (-8+0j)                                  |
+| -5.656854+-2.343146*i | -5.656854+-2.343146*i | (-5.656854249492381-2.3431457505076194j) |
+| -4.000000+-4.000000*i | -4.000000+-4.000000*i | (-4-4j)                                  |
+| -2.343146+-5.656854*i | -2.343146+-5.656854*i | (-2.3431457505076194-5.656854249492381j) |
+| 0.000000+-8.000000*i  | 0.000000+-8.000000*i  | (0-8j)                                   |
+| 5.656854+-13.656854*i | 5.656854+-13.656854*i | (5.656854249492381-13.65685424949238j)   |
+
+
+** Complex numbers on Windows
+
+As an aside, I also tried to get this code running on a Windows machine, but
+[[https://learn.microsoft.com/en-us/cpp/c-runtime-library/complex-math-support?view=msvc-170][Microsoft's MSVC]] does not support the complex implementation defined in the C
+standard. I'm going to pretend like I never saw that and deal with it when it
+becomes inevitable 😅.
+
+** Conclusion
+
+I've put these functions in [[https://github.com/frankvanbever/libfvb][a little library]] that I published on GitHub. It's
+nothing much right now, just these functions, but I intend for it to become a
+place where I put all that C functionality that I find missing from standard
+libraries.
