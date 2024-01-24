@@ -1,0 +1,174 @@
+#+TITLE: FFT in C
+#+DATE: 2023-12-29T18:48:54+01:00
+#+DRAFT: true
+
+Lately I've been doing a deep dive into DSP because I wanted to know how certain
+audio effects work. I started off with a book about programming VST plugins,
+however I found that the DSP course I took at university was a bit too long ago,
+so I had to go back to basics.
+
+# more
+
+I worked my way through Julius O. Smith III's /Mathematics of the Discrete
+Fourier Transform (DFT) With Audio Applications/ and it was a super interesting
+experience, though also a lot of work. In the end I feel that I have a good
+grasp on the Fourier transform and a lot of the mathematics underpinning it.
+
+After having finished I figured that I should probably try to translate this
+knowledge into something practical, so I decided that I wanted to implement the
+DFT and Cooley-Tukey FFT in C.
+
+Up until this point I've been exclusively working in Python, using Numpy, Scipy
+and Matplotlib in a Jupyter Lab. The combination of these project makes
+scientific computing a breeze.
+
+Moving to C made me realize I never really have done something like this in my
+15 years of experience. I have no clue how ~complex numbers~ work in C for
+example. So these are my somewhat cleaned up notes of my process of figuring out
+how to implement the DFT/FFT in C.
+
+* Complex numbers
+
+Complex numbers in C were introduced in the C99 standard. Everything you need is
+available in ~complex.h~. In theory it's possible with some compiler magic to
+get these things without the header (e.g. ~_Complex~ is seemingly available
+without including the header) but it doesn't make a lot of sense to do that.
+
+#+begin_src c
+#include <complex.h>
+#+end_src
+
+
+A complex number is made up of a real and imaginary part. A declaration of a
+complex number looks like this:
+
+#+begin_src c
+  double complex foo = 1.0 + 2.0*I;
+#+end_src
+
+This is a double precision floating point type. I is the imaginary constant. If
+you want to get the separate real and imaginary part the functions ~creal~ and
+~cimag~ provide these.
+
+The following function does a pretty print of a complex number:
+
+#+begin_src c
+  #include <stdio.h>
+  void print_complex(complex z)
+  {
+      printf("%f+%f*i\n", creal(z), cimag(z));
+  }
+#+end_src
+
+Arithmetic works just like it would with regular types:
+
+#+begin_src c
+  void complex_arithmetic(void)
+  {
+      double complex a = 1.0 + 2.0*I;
+      double complex b = 2.0 + 3.0*I;
+
+      print_complex(a+b);
+      print_complex(a-b);
+      print_complex(a*b);
+      print_complex(a/b);
+  }
+#+end_src
+
+Gives the following output:
+
+#+begin_src
+3.000000+5.000000*i
+-1.000000+-1.000000*i
+-4.000000+7.000000*i
+0.615385+0.076923*i
+#+end_src
+
+Which looks OK. This is really all we need to implement a DFT.
+
+
+* Discrete Fourier Transform
+
+The discrete Fourier transform is defined by the following formula
+
+$$
+X_{k} = \sum_{n = 0}^{N - 1} x_{n} \cdot e^{-\frac{i2\pi}{N}kn}
+$$
+
+We've got arithmetic down, but there's a couple more things that we need. First
+of all there's the exponential function. Regularly you'd use ~exp( douple arg)~
+as defined in ~math.h~. However, given that we're dealing with complex numbers
+here we need the complex variant ~cexp(double complex z)~ instead. The other
+thing is \(\pi\), which is defined as ~M_PI~ as part of the mathematical
+constants that GCC adds to ~math.h~.
+
+This gives us the following C implementation:
+
+#+begin_src c
+void dft(double complex *x, double complex *X, size_t len)
+{
+		int N = len;
+		for (int k = 0; k < len; k++) {
+				for (int n = 0; n < len; n++) {
+						X[k] += x[n] * cexp(-1 * ((I*2*M_PI)/N) * k * n);
+				}
+		}
+}
+#+end_src
+
+When we use the following loop to fill in some dummy sample data
+
+#+begin_src c
+		for (int i = 0; i < num_samples; i++) {
+				x[i] = 1.0*i + 1.0*i*I;
+		}
+#+end_src
+
+We get the following output:
+
+#+begin_src
+45.000000+45.000000*i
+-20.388418+10.388418*i
+-11.881910+1.881910*i
+-8.632713+-1.367287*i
+-6.624598+-3.375402*i
+-5.000000+-5.000000*i
+-3.375402+-6.624598*i
+-1.367287+-8.632713*i
+1.881910+-11.881910*i
+10.388418+-20.388418*i
+#+end_src
+
+Let's compare if this output is correct by checking it against the ~numpy~ FFT
+implementation.
+
+#+begin_src python
+  x = []
+  for i in range(10):
+      x.append(1.0*i + 1.0*i*1j)
+
+  print(fft(x))
+#+end_src
+
+Let's compare the output of this with the output of our C function:
+
+#+ATTR_HTML: :class table table-striped
+| C                      | Python                                  |
+|------------------------+-----------------------------------------|
+| 45.000000+45.000000*i  | 45+45j                                  |
+| -20.388418+10.388418*i | -20.388417685876266+10.388417685876266j |
+| -11.881910+1.881910*i  | -11.881909602355867+1.8819096023558668j |
+| -8.632713-1.367287*i   | -8.632712640026803-1.3672873599731972j  |
+| -6.624598-3.375402*i   | -6.624598481164532-3.375401518835468j   |
+| -5.000000-5.000000*i   | -4.999999999999998-5.000000000000002j   |
+| -3.375402-6.624598*i   | -3.375401518835468-6.624598481164532j   |
+| -1.367287-8.632713*i   | -1.3672873599731958-8.632712640026805j  |
+| 1.881910-11.881910*i   | 1.8819096023558668-11.881909602355867j  |
+| 10.388418-20.388418*i  | 10.388417685876263-20.388417685876263j  |
+
+Those numbers look almost the same, the small differences can be attributed to
+floating point rounding errors.
+
+* Cooley-Tukey FFT
+
+
