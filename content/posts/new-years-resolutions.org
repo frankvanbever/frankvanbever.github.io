@@ -1,0 +1,62 @@
+#+TITLE: New Years Resolutions
+#+DATE: 2024-01-28T21:33:56+01:00
+#+DRAFT: true
+
+The new year is already well underway and I've got a couple of things I want to
+accomplish this year. Usually I just maintain this list in my head, but this
+year I figured I'd write them down and make the Internet my accountability
+buddy.
+** Technological projects
+I've recently had a pretty big change at work, moving into the role of software
+architect. This means I spend a lot more time in meetings and way less time
+actually in the driver seat doing some coding. This makes these projects even
+more important to make sure I don't lose touch.
+
+First of all I believe this is the year I should learn ~Rust~. This is a topic
+I've tried to tackle in the past, but with it's inclusion in the kernel going
+full steam ahead it's starting to feel as though I might miss the boat if I
+don't start learning it now. It's hard to define what "learning Rust" means
+exactly, so my plan is to work my way through the Rust book that comes included
+with a Rust installation and try and build something non-trivial like an LV2
+plugin, that should be a fun challenge.
+
+This year I also want to continue my self-study of DSP. I've got 2 books lined
+up: Julius O. Smith's [[https://ccrma.stanford.edu/~jos/filters/][Introduction to Digital Filters]]. Once I've finished that
+one I'm going to continue with [[https://www.routledge.com/Audio-Effects-Theory-Implementation-and-Application/Reiss-McPherson/p/book/9781466560284][Audio Effects: Theory, Implementation and
+Application]] which I put to the side earlier because I felt like I had
+forgotten too much of my DSP knowledge that I gained at university.
+
+I also want to make something physical this year. I've got all the
+components for a [[https://www.runoffgroove.com/ruby.html][Ruby Amplifier]] sitting in a box in my basement. I want to
+design a PB with [[https://www.kicad.org/][Kicad]], have it produced and end up with a functioning device.
+
+Finally I really want to get started with [[https://www.home-assistant.io/][Home Assistant]]. It's something that
+has been on my To Do list ever since my partner and I bought and renovated a
+house. By the end of the year I want to have a stable Home
+
+** Music projects
+My first musical goal is to post 12 videos of me playing my bass guitar to
+YouTube. I've already [[https://www.youtube.com/channel/UCbK0bbAnsJQssdB0X8pqg8A][uploaded 3 videos]] so I've already got a head start.
+
+I also want to be able to play a simple song with both hands (melody +
+accompaniment) by myself.
+
+** Miscellaneous
+Ideally this blog would also be a lot more active, so I'm going to apply the same
+logic and try to go for 12 posts on my blog. I'd also like to have some feedback
+about whether anyone is reading these posts in a way that respects the privacy
+of the reader, but I'm not sure that I can easily set something up so I won't
+pin myself to it.
+
+I also want to do the 12 book challenge that I did on [[https://bookwyrm.social/user/fvbever][Bookwyrm]]. By the end of
+this year I want to have read at least 12 books. There's already one book in the
+done column so I'm right on track.
+
+As a last item I want to finish the main quest in the run of TES III: Morrowind I
+started, it doesn't all need to be work.
+
+** Final thoughts
+
+This is an experiment, writing down what my goals are. It might be a good idea
+to add an additional page here to keep track of these goals and see where I end
+up in 2025.
