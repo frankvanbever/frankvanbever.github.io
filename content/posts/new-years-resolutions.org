@@ -28,7 +28,7 @@ forgotten too much of my DSP knowledge that I gained at university.
 
 I also want to make something physical this year. I've got all the
 components for a [[https://www.runoffgroove.com/ruby.html][Ruby Amplifier]] sitting in a box in my basement. I want to
-design a PB with [[https://www.kicad.org/][Kicad]], have it produced and end up with a functioning device.
+design a PCB with [[https://www.kicad.org/][Kicad]], have it produced and end up with a functioning device.
 
 Finally I really want to get started with [[https://www.home-assistant.io/][Home Assistant]]. It's something that
 has been on my To Do list ever since my partner and I bought and renovated a
