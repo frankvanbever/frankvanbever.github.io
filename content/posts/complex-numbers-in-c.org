@@ -169,6 +169,119 @@ Let's compare the output of this with the output of our C function:
 Those numbers look almost the same, the small differences can be attributed to
 floating point rounding errors.
 
-* Cooley-Tukey FFT
+* COMMENT Cooley-Tukey FFT
 
+The Cooley-Tukey FFT is an algorithm to compute the Fourier Transform faster
+than the regular DFT. It's recursive in nature. The [[https://en.wikipedia.org/wiki/Cooley–Tukey_FFT_algorithm][Wikipedia article]] about it
+is pretty good so I'd direct you over there for the explanation.
 
+#+begin_src c
+  int fft(complex double *x, size_t len, complex double **X)
+  {
+      int ret = -1;
+      complex double *x_even = NULL;
+      complex double *x_odd = NULL;
+
+      complex double *X_even = NULL;
+      complex double *X_odd = NULL;
+
+      complex double *factor = NULL;
+
+      ,*X = malloc(len * sizeof(complex double));
+      if (*X == NULL) {
+          goto cleanup;
+      }
+
+      if (len == 1) {
+          (*X)[0] = x[0];
+          return 0;
+      } else {
+          if (get_even(x, len, &x_even)) {
+              goto cleanup;
+          }
+          if (get_odd(x, len, &x_odd)) {
+              goto cleanup;
+          }
+
+          if (fft(x_even, len / 2, &X_even)) {
+              goto cleanup;
+          }
+
+          if (fft(x_odd, len / 2, &X_odd)) {
+              goto cleanup;
+          }
+
+          if (get_factor(len, &factor)) {
+              goto cleanup;
+          }
+
+          for (int i = 0; i < len; i++) {
+              int index = i % (len / 2);
+              (*X)[i] = X_even[index] + X_odd[index] * factor[i];
+          }
+      }
+
+      ret = 0;
+
+  cleanup:
+      if (x_even)
+          free(x_even);
+      if (x_odd)
+          free(x_odd);
+      if (X_even)
+          free(X_even);
+      if (X_odd)
+          free(X_odd);
+      if (factor)
+          free(factor);
+
+      return ret;
+  }
+#+end_src
+
+The algorithm works recursively on the even and odd samples. To respectively get
+the even and odd samples I use the following:
+
+#+begin_src c
+static int get_even(complex double *x, size_t len, complex double **even)
+{
+	size_t N = (len / 2) + (len % 2);
+
+	*even = malloc(N * sizeof(complex double));
+	if (*even == NULL) {
+		return -1;
+	}
+
+	for (int i = 0; i < N; i++) {
+		(*even)[i] = x[i * 2];
+	}
+
+	return 0;
+}
+
+static int get_odd(complex double *x, size_t len, complex double **odd)
+{
+	size_t N = len / 2;
+
+	*odd = malloc(N * sizeof(complex double));
+	if (*odd == NULL) {
+		return -1;
+	}
+
+	for (int i = 0; i < N; i++) {
+		(*odd)[i] = x[(i * 2) + 1];
+	}
+
+	return 0;
+}
+#+end_src
+
+Using it on the same data that We've been using before gives the following results:
+
+#+begin_comment
+TODO add test data here
+#+end_comment
+
+which as you can see corresponds pretty well with what we got from both Python
+and the DFT. There's some shenanigans happening with positive and negative zero
+but I'm chalking that up to ~IEEE 754~ being weird.
