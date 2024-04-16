@@ -1,0 +1,159 @@
+#+TITLE: "Simplest Lowpass Filter" in Python
+#+DATE: <2024-05-15 wo>
+#+DRAFT: true
+
+I'm currently working my way through ~Introduction to Digital Filters with Audio
+Applications~ by Julius O. Smith III. The first section deals with what the book
+calls the /simplest lowpass filter/. After the initial mathematical introduction
+(both via tedious trigonometry and a complex approach) there's an actual
+implementation. The book uses Matlab, but I much prefer Python for this type of
+job even though I should probably use [[https://octave.org/][GNU Octave]] for this job but I really
+prefer Python. These are the notes I took when converting that initial script.
+
+# more
+
+The filter is described by:
+
+$$
+y(n) = x(n)+x(n-1),  n = 1,2,...,N
+$$
+
+This is the implementation in Matlab:
+
+#+begin_src octave
+% simplpm1.m - matlab main program implementing
+%              the simplest lowpass filter:
+%
+%                    y(n) = x(n)+x(n-1)}
+
+N=10;       % length of test input signal
+x = 1:N;    % test input signal (integer ramp)
+B = [1,1];  % transfer function numerator
+A = 1;      % transfer function denominator
+
+y = filter(B,A,x);
+
+for i=1:N
+  disp(sprintf('x(%d)=%f\ty(%d)=%f',i,x(i),i,y(i)));
+end
+#+end_src
+
+There's not much to it, we need to figure out what the ~scipy~ alternative is to
+the Matlab ~filter~ function and make sure the indices are OK.
+
+This is the translation I came up with:
+
+#+begin_src python
+from scipy.signal import lfilter
+import numpy as np
+
+N=10
+x = np.arange(1.0,N+1)
+B = [1,1]
+A = 1
+
+y = lfilter(B,A,x);
+
+for i in range(N):
+    print(f"x({i+1})={x[i]} \t y({i+1})={y[i]}")
+#+end_src
+
+
+As far as I can tell the Matlab function ~filter~ correspons the most to the
+Python function ~lfilter~. There's also the need to convert the code from
+1-indexed to 0-indexed.
+
+#+ATTR_HTML: :class table table-striped
+| X          | Y          |
+|------------+------------|
+| x(1)=1.0   | y(1)=1.0   |
+| x(2)=2.0   | y(2)=3.0   |
+| x(3)=3.0   | y(3)=5.0   |
+| x(4)=4.0   | y(4)=7.0   |
+| x(5)=5.0   | y(5)=9.0   |
+| x(6)=6.0   | y(6)=11.0  |
+| x(7)=7.0   | y(7)=13.0  |
+| x(8)=8.0   | y(8)=15.0  |
+| x(9)=9.0   | y(9)=17.0  |
+| x(10)=10.0 | y(10)=19.0 |
+
+This is the same result. ~scipy.signal.lfilter~ takes three parameters: ~b~, ~a~
+and ~x~. The documentation mentions that ~scipy.signal.sosfilt~ is actually the
+preferred function. That's something to figure out at a later point though.
+
+A second part of the exercise is a block oriented approach of the filter, where
+the filter state is saved and added as an additional parameter on the next call
+of the function.
+
+#+begin_src octave
+% simplpm2.m - block-oriented version of simplpm1.m
+
+N=10;       % length of test input signal
+NB=N/2;     % block length
+x = 1:N;    % test input signal
+B = [1,1];  % feedforward coefficients
+A = 1;      % feedback coefficients (no-feedback case)
+
+[y1, Sf] = filter(B,A,x(1:NB));      % process block 1
+      y2 = filter(B,A,x(NB+1:N),Sf); % process block 2
+
+for i=1:NB   % print input and output for block 1
+  disp(sprintf('x(%d)=%f\ty(%d)=%f',i,x(i),i,y1(i)));
+end
+
+for i=NB+1:N % print input and output for block 2
+  disp(sprintf('x(%d)=%f\ty(%d)=%f',i,x(i),i,y2(i-NB)));
+end
+#+end_src
+
+The python implementation is a bit more finicky though:
+
+The main difference is that you have to explicitly set the initial condition for
+the filter for the ~scipy.signal.lfilter~ function to actually return the state
+~zf~ necessary for the next block. Setting it to ~[0.0]~ basically means that
+the filter is at initial rest. It would probably be slightly more correct to use
+~scipy.signal.lfiltic~ for this, but it wouldn't make any difference. After that
+it's just a matter of passing ~zf~ into the computation of the second block.
+
+I found it easier to concatenate both blocks instead of having two loops.
+Because these are ~numpy.ndarray~ you can't do the typical python trick of
+using the ~+~ operator. Using ~numpy.concatenate~ does the trick though.
+
+#+begin_src python
+import numpy as np
+
+N=10
+NB=int(N/2)
+x = np.arange(1.0,N+1)
+
+B = [1,1]
+A = 1
+
+y1, zf = lfilter(B,A,x[0:NB],zi=[0.0])
+y2, _ = lfilter(B,A,x[NB:N],zi=zf)
+
+y = np.concatenate((y1,y2))
+
+for i in range(N):
+    print(f"x({i+1})={x[i]} \t y({i+1})={y[i]}")
+#+end_src
+
+The script gives the following output:
+
+#+ATTR_HTML: :class table table-striped
+| X          | Y          |
+|------------+------------|
+| x(1)=1.0   | y(1)=1.0   |
+| x(2)=2.0   | y(2)=3.0   |
+| x(3)=3.0   | y(3)=5.0   |
+| x(4)=4.0   | y(4)=7.0   |
+| x(5)=5.0   | y(5)=9.0   |
+| x(6)=6.0   | y(6)=11.0  |
+| x(7)=7.0   | y(7)=13.0  |
+| x(8)=8.0   | y(8)=15.0  |
+| x(9)=9.0   | y(9)=17.0  |
+| x(10)=10.0 | y(10)=19.0 |
+
+This is exactly the same as above. ~Scipy~ and ~Numpy~ really are amazing tools
+and in my experience really good at replacing something like Matlab, but there
+are some pitfalls you have to watch out for when trying to do the conversion.
