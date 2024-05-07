@@ -28,3 +28,6 @@ th {
     font-style: italic;
 }
 
+img {
+    max-width: 100%;
+}
