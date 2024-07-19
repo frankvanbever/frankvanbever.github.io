@@ -44,7 +44,11 @@ $$
 H(z) = \frac{Y(z)}{X(z)} = \frac{1+0.5^{3}Z^{-3}}{1+0.9^{5}Z^{-5}}
 $$
 
-Rewriting this in normal polynomial form by multipling with $\frac{Z^{5}}{Z^{5}}$ gives
+Rewriting this in normal polynomial form by multipling with
+
+$$
+\frac{Z^{5}}{Z^{5}}
+$$ gives
 
 $$
 H(z) = \frac{Z^{5} + 0.5^{3}Z^{2}}{Z^{5} + 0.9^{5}}
