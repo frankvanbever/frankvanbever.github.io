@@ -113,121 +113,121 @@ gains, phases = swanal(t, f/fs, B, A)
 
 
     
-![png](/output_3_0.png)
+![png](/sine-wave-analysis/output_3_0.png)
     
 
 
 
     
-![png](/output_3_1.png)
+![png](/sine-wave-analysis/output_3_1.png)
     
 
 
 
     
-![png](/output_3_2.png)
+![png](/sine-wave-analysis/output_3_2.png)
     
 
 
 
     
-![png](/output_3_3.png)
+![png](/sine-wave-analysis/output_3_3.png)
     
 
 
 
     
-![png](/output_3_4.png)
+![png](/sine-wave-analysis/output_3_4.png)
     
 
 
 
     
-![png](/output_3_5.png)
+![png](/sine-wave-analysis/output_3_5.png)
     
 
 
 
     
-![png](/output_3_6.png)
+![png](/sine-wave-analysis/output_3_6.png)
     
 
 
 
     
-![png](/output_3_7.png)
+![png](/sine-wave-analysis/output_3_7.png)
     
 
 
 
     
-![png](/output_3_8.png)
+![png](/sine-wave-analysis/output_3_8.png)
     
 
 
 
     
-![png](/output_3_9.png)
+![png](/sine-wave-analysis/output_3_9.png)
     
 
 
 
     
-![png](/output_3_10.png)
+![png](/sine-wave-analysis/output_3_10.png)
     
 
 
 
     
-![png](/output_3_11.png)
+![png](/sine-wave-analysis/output_3_11.png)
     
 
 
 
     
-![png](/output_3_12.png)
+![png](/sine-wave-analysis/output_3_12.png)
     
 
 
 
     
-![png](/output_3_13.png)
+![png](/sine-wave-analysis/output_3_13.png)
     
 
 
 
     
-![png](/output_3_14.png)
+![png](/sine-wave-analysis/output_3_14.png)
     
 
 
 
     
-![png](/output_3_15.png)
+![png](/sine-wave-analysis/output_3_15.png)
     
 
 
 
     
-![png](/output_3_16.png)
+![png](/sine-wave-analysis/output_3_16.png)
     
 
 
 
     
-![png](/output_3_17.png)
+![png](/sine-wave-analysis/output_3_17.png)
     
 
 
 
     
-![png](/output_3_18.png)
+![png](/sine-wave-analysis/output_3_18.png)
     
 
 
 
     
-![png](/output_3_19.png)
+![png](/sine-wave-analysis/output_3_19.png)
     
 
 
@@ -268,13 +268,13 @@ fig2.set_figwidth(15)
 
 
 
-![png](/output_5_0.png)
+![png](/sine-wave-analysis/output_5_0.png)
 
 
 
 
 
-![png](/output_5_1.png)
+![png](/sine-wave-analysis/output_5_1.png)
 
 
 
