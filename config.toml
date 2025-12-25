@@ -33,3 +33,6 @@ title = '/home/fvb'
     noHl = false
     style = 'solarized-light'
     tabWidth = 4
+
+  [markup.goldmark.renderer]
+    unsafe = true
